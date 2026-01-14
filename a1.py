@@ -47,10 +47,16 @@ def apply_filter(image, filter_type):
         edges = cv2.Canny(gray_image, 100, 200)
 
         filtered_image = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+    elif filter_type=="cartoon":
+        gray=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        gray=cv2.medianBlur(gray,5)
+        edges=cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY,9,9)
+        color=cv2.bilateralFilter(image,9,300,300)
+        filtered_image=cv2.bitwise_and(color,color,mask=edges)
 
     return filtered_image
 
-# Load the image
+# Load the imageq
 
 image_path = 'example.jpg'  # Provide your image path
 
@@ -76,6 +82,8 @@ else:
 
     print("c - Canny Edge Detection")
 
+    print("t - Median Blur(Cartoon)")
+
     print("q - Quit")
 
     while True:
@@ -85,8 +93,9 @@ else:
         filtered_image = apply_filter(image, filter_type)
 
         # Display the filtered image
+        resized_image=cv2.resize(filtered_image, (600,500), interpolation=cv2.INTER_AREA)
 
-        cv2.imshow("Filtered Image", filtered_image)
+        cv2.imshow("Filtered Image", resized_image)
 
         # Wait for key press
 
@@ -113,6 +122,10 @@ else:
         elif key == ord('c'):
 
             filter_type = "canny"
+        
+        elif key == ord('t'):
+
+            filter_type = "cartoon"
 
         elif key == ord('q'):
 
